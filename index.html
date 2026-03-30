@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Engineering Toolbox</title>
+  <meta name="description" content="A GitHub Pages encyclopedia of modern AI engineering tools for RAG, orchestration, agents, retrieval, serving, evaluation, and observability." />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(16, 24, 46, 0.82);
+      --panel-2: rgba(20, 30, 58, 0.9);
+      --text: #eef2ff;
+      --muted: #b9c3e6;
+      --line: rgba(255,255,255,0.08);
+      --accent: #7c9cff;
+      --accent-2: #3dd9b4;
+      --warning: #ffb86b;
+      --shadow: 0 20px 50px rgba(0,0,0,0.28);
+      --radius: 22px;
+      --chip: rgba(255,255,255,0.08);
+      --chip-active: rgba(124,156,255,0.16);
+      --blue: #8ab4ff;
+      --green: #70e1b5;
+      --purple: #c3a8ff;
+      --orange: #ffbd7a;
+      --pink: #ff9fd2;
+      --cyan: #79e6ff;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(124,156,255,0.22), transparent 28%),
+        radial-gradient(circle at top right, rgba(61,217,180,0.12), transparent 24%),
+        linear-gradient(180deg, #09101d 0%, #0a1020 40%, #0b1020 100%);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .shell {
+      width: min(1380px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(124,156,255,0.95), rgba(61,217,180,0.9));
+      box-shadow: 0 12px 30px rgba(61,217,180,0.18);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: #07111f;
+    }
+
+    .brand-copy h1 {
+      font-size: 1.02rem;
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-copy p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .top-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ghost-btn, .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 11px 15px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-size: 0.92rem;
+      transition: 180ms ease;
+    }
+
+    .ghost-btn:hover, .action-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(124,156,255,0.45);
+      background: rgba(124,156,255,0.08);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(19,31,60,0.96), rgba(10,17,33,0.88));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+      margin-bottom: 22px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -110px -110px auto;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(124,156,255,0.24), transparent 68%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(124,156,255,0.12);
+      color: #dbe5ff;
+      font-size: 0.83rem;
+      border: 1px solid rgba(124,156,255,0.2);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.65fr 1fr;
+      gap: 24px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .hero h2 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1.05;
+      max-width: 12ch;
+    }
+
+    .hero p.lead {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.7;
+      max-width: 72ch;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      padding: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .stat .value {
+      font-size: 1.6rem;
+      font-weight: 750;
+      margin-bottom: 4px;
+    }
+
+    .stat .label {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .map-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      height: 100%;
+    }
+
+    .map-card h3 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+    }
+
+    .map-step {
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .map-step small {
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.75;
+      margin-bottom: 4px;
+      font-size: 0.68rem;
+    }
+
+    .map-step strong {
+      display: block;
+      font-size: 0.98rem;
+      margin-bottom: 4px;
+    }
+
+    .map-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .search-wrap, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .search-wrap {
+      padding: 18px;
+    }
+
+    .search-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .search {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 15px 16px;
+      border-radius: 16px;
+      outline: none;
+      font-size: 0.98rem;
+    }
+
+    .search::placeholder { color: #c7d0f1aa; }
+
+    .chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .chip {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: var(--chip);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.07);
+      font-size: 0.86rem;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .chip.active {
+      background: var(--chip-active);
+      border-color: rgba(124,156,255,0.32);
+      color: #dfe7ff;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .panel h3 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+    }
+
+    .quicklist {
+      display: grid;
+      gap: 10px;
+    }
+
+    .quickitem {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .quickitem strong {
+      display: block;
+      font-size: 0.94rem;
+      margin-bottom: 4px;
+    }
+
+    .quickitem span {
+      color: var(--muted);
+      font-size: 0.87rem;
+      line-height: 1.5;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .results-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 272px;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 0.78rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      white-space: nowrap;
+    }
+
+    .tag .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(124,156,255,0.12);
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta span {
+      font-size: 0.77rem;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      color: #d8e0ff;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .desc {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.92rem;
+      flex: 1;
+    }
+
+    .usewhen {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      padding: 12px 13px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #dbe4ff;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: auto;
+    }
+
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.84rem;
+      transition: 180ms ease;
+    }
+
+    .link-btn:hover {
+      background: rgba(124,156,255,0.12);
+      border-color: rgba(124,156,255,0.28);
+      transform: translateY(-1px);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .stack {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .stack h3, .footer-card h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .stack p, .footer-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .stack ol {
+      margin: 0;
+      padding-left: 18px;
+      color: #dde6ff;
+      line-height: 1.7;
+      font-size: 0.9rem;
+    }
+
+    .stack li + li { margin-top: 4px; }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .footer-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .source-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .source-link {
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.04);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      color: #dde6ff;
+    }
+
+    .source-link:hover {
+      background: rgba(124,156,255,0.1);
+      border-color: rgba(124,156,255,0.28);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 42px 20px;
+      color: var(--muted);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      font-size: 0.81rem;
+      color: var(--muted);
+    }
+
+    .legend i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-align: center;
+    }
+
+    @media (max-width: 1160px) {
+      .content, .controls, .hero-grid, .footer-grid {
+        grid-template-columns: 1fr;
+      }
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 900px) {
+      .grid, .source-list, .stats {
+        grid-template-columns: 1fr;
+      }
+      .topbar {
+        flex-direction: column;
+        align-items: start;
+      }
+      .search-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <div class="brand-copy">
+          <h1>AI Engineering Toolbox</h1>
+          <p>GitHub Pages encyclopedia for RAG, orchestration, agents, serving, and evals</p>
+        </div>
+      </div>
+      <div class="top-links">
+        <a class="ghost-btn" href="#directory">Browse tools</a>
+        <a class="ghost-btn" href="#stacks">Recommended stacks</a>
+        <a class="ghost-btn" href="#sources">Official sources</a>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">Curated for builders shipping AI systems in 2026</div>
+      <div class="hero-grid">
+        <div>
+          <h2>Modern AI engineering, organized like a real toolbox.</h2>
+          <p class="lead">
+            This site is a searchable encyclopedia of current AI engineering tools across retrieval-augmented generation, agent frameworks, workflow orchestration, vector search, document ingestion, model serving, gateways, evaluation, observability, and guardrails.
+          </p>
+          <div class="stats">
+            <div class="stat"><div class="value" id="statTools">0</div><div class="label">Tool entries</div></div>
+            <div class="stat"><div class="value">7</div><div class="label">Engineering layers</div></div>
+            <div class="stat"><div class="value">GitHub</div><div class="label">Pages-ready static site</div></div>
+            <div class="stat"><div class="value">Official</div><div class="label">Direct docs links</div></div>
+          </div>
+        </div>
+        <div class="map-card">
+          <h3>AI engineering stack map</h3>
+          <div class="map-step"><small>1. Ingest</small><strong>Parse and structure raw documents</strong><span>Docling, Unstructured, PyMuPDF4LLM, LlamaParse.</span></div>
+          <div class="map-step"><small>2. Retrieve</small><strong>Index embeddings and search</strong><span>Qdrant, Pinecone, Chroma, Weaviate, Milvus.</span></div>
+          <div class="map-step"><small>3. Reason</small><strong>Build RAG apps and agents</strong><span>LangChain, LangGraph, LlamaIndex, Haystack, DSPy.</span></div>
+          <div class="map-step"><small>4. Orchestrate</small><strong>Run durable workflows</strong><span>CrewAI, Prefect, Temporal, Dagster, Airflow.</span></div>
+          <div class="map-step"><small>5. Serve</small><strong>Route and deploy models</strong><span>vLLM, TGI, LiteLLM, Ollama.</span></div>
+          <div class="map-step"><small>6. Observe</small><strong>Evaluate and debug behavior</strong><span>Langfuse, Phoenix, LangSmith, MLflow, Promptfoo.</span></div>
+          <div class="map-step"><small>7. Govern</small><strong>Add standards and guardrails</strong><span>MCP, NeMo Guardrails.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <div class="search-wrap">
+        <div class="search-grid">
+          <input class="search" id="searchInput" type="text" placeholder="Search tools, tags, categories, or use cases… e.g. hybrid retrieval, agent framework, OpenAI-compatible server" />
+          <button class="action-btn" id="clearBtn">Clear filters</button>
+        </div>
+        <div class="chips" id="categoryChips"></div>
+        <div class="legend">
+          <span><i style="background: var(--blue)"></i>RAG / framework</span>
+          <span><i style="background: var(--green)"></i>Retrieval infra</span>
+          <span><i style="background: var(--purple)"></i>Agents / orchestration</span>
+          <span><i style="background: var(--orange)"></i>Serving / gateway</span>
+          <span><i style="background: var(--pink)"></i>Eval / observability</span>
+          <span><i style="background: var(--cyan)"></i>Parsing / protocol / guardrails</span>
+        </div>
+      </div>
+      <aside class="panel">
+        <h3>How to use this site</h3>
+        <div class="quicklist">
+          <div class="quickitem"><strong>Start with your bottleneck</strong><span>Need better retrieval? Filter to vector search, parsing, and RAG frameworks first.</span></div>
+          <div class="quickitem"><strong>Compare by job-to-be-done</strong><span>Each card shows what the tool is, where it fits, and when to reach for it.</span></div>
+          <div class="quickitem"><strong>Use official docs first</strong><span>Every card links directly to the project’s official documentation or homepage.</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="content" id="directory">
+      <main>
+        <div class="results-bar">
+          <div id="resultCount">Showing all tools</div>
+          <div>Updated: March 30, 2026</div>
+        </div>
+        <div class="grid" id="toolGrid"></div>
+        <div class="empty" id="emptyState" hidden>No matching tools yet. Try a broader query or reset the category filter.</div>
+      </main>
+
+      <aside class="sidebar" id="stacks">
+        <div class="stack">
+          <h3>Starter stack: local RAG</h3>
+          <p>Good for solo builders, research labs, and quick internal tools.</p>
+          <ol>
+            <li>Docling or PyMuPDF4LLM for PDF extraction</li>
+            <li>Chroma or Qdrant for retrieval</li>
+            <li>LlamaIndex or Haystack for RAG logic</li>
+            <li>Ollama or vLLM for local serving</li>
+            <li>Langfuse or Phoenix for tracing</li>
+          </ol>
+        </div>
+
+        <div class="stack">
+          <h3>Starter stack: production agent app</h3>
+          <p>Good for multi-step assistants, enterprise copilots, and tool-using workflows.</p>
+          <ol>
+            <li>Unstructured or Docling for ingestion</li>
+            <li>Pinecone, Weaviate, or Qdrant for managed retrieval</li>
+            <li>LangGraph, CrewAI, or OpenAI Agents SDK for agent logic</li>
+            <li>Temporal or Prefect for durable orchestration</li>
+            <li>LiteLLM + vLLM/TGI for model routing and serving</li>
+            <li>LangSmith, Phoenix, or MLflow for evals and observability</li>
+            <li>NeMo Guardrails + MCP where governance and tools matter</li>
+          </ol>
+        </div>
+
+        <div class="stack">
+          <h3>Decision heuristic</h3>
+          <p>Use this shortcut when choosing among the major categories.</p>
+          <ol>
+            <li>Need batteries-included RAG? Start with LlamaIndex or Haystack.</li>
+            <li>Need fine-grained, stateful agent control? Start with LangGraph.</li>
+            <li>Need durable long-running jobs? Add Temporal or Prefect.</li>
+            <li>Need local inference? Start with Ollama or vLLM.</li>
+            <li>Need evals before launch? Add Promptfoo, Langfuse, Phoenix, or LangSmith.</li>
+          </ol>
+        </div>
+      </aside>
+    </section>
+
+    <section class="footer-grid" id="sources">
+      <div class="footer-card">
+        <h3>About this build</h3>
+        <p>
+          This page is designed as a single static HTML file so it can be dropped straight into a GitHub Pages repository. It uses client-side search and filter chips only, so there is no backend, build step, or framework dependency.
+        </p>
+        <p>
+          The curation focus is practical AI engineering: current tools that matter for building RAG systems, agentic workflows, model-serving stacks, and production evaluation loops.
+        </p>
+        <div class="links">
+          <a class="link-btn" href="./README.md">Read deployment notes</a>
+          <a class="link-btn" href="./.nojekyll">.nojekyll included</a>
+        </div>
+      </div>
+      <div class="footer-card">
+        <h3>Official-source directory</h3>
+        <p>These links anchor the encyclopedia to official documentation rather than secondary blog lists.</p>
+        <div class="source-list" id="sourceList"></div>
+      </div>
+    </section>
+
+    <footer>
+      Built as a GitHub Pages-ready static encyclopedia for AI engineering tools.
+    </footer>
+  </div>
+
+  <script>
+    const tools = [
+      {
+        name: "LangChain",
+        category: "Frameworks & RAG",
+        color: "var(--blue)",
+        type: "Framework",
+        license: "Open source",
+        summary: "General-purpose framework for building LLM applications with a very broad integrations ecosystem.",
+        useWhen: "Use when you want fast prototyping, broad provider integrations, and a large ecosystem around prompts, tools, memory, and retrieval.",
+        website: "https://www.langchain.com/",
+        docs: "https://docs.langchain.com/oss/python/langchain/overview",
+        github: "https://github.com/langchain-ai/langchain",
+        tags: ["agents", "rag", "integrations", "python", "typescript", "tool-calling"]
+      },
+      {
+        name: "LangGraph",
+        category: "Agents & Workflow Orchestration",
+        color: "var(--purple)",
+        type: "Agent framework",
+        license: "Open source",
+        summary: "Low-level framework for long-running, stateful agent workflows with graph-based control.",
+        useWhen: "Use when you need explicit state, branching, retries, interrupts, human-in-the-loop checkpoints, or multi-agent control that should not feel magical.",
+        website: "https://www.langchain.com/langgraph",
+        docs: "https://docs.langchain.com/oss/python/langgraph/overview",
+        github: "https://github.com/langchain-ai/langgraph",
+        tags: ["agents", "stateful", "workflow", "graph", "orchestration", "durable"]
+      },
+      {
+        name: "LlamaIndex",
+        category: "Frameworks & RAG",
+        color: "var(--blue)",
+        type: "RAG framework",
+        license: "Open source + cloud",
+        summary: "RAG-first framework centered on data connectors, indexing, retrieval, and workflows.",
+        useWhen: "Use when retrieval is the center of the app and you want strong indexing abstractions, query engines, and data-source integrations.",
+        website: "https://www.llamaindex.ai/",
+        docs: "https://developers.llamaindex.ai/python/llamaagents/workflows/",
+        github: "https://github.com/run-llama/llama_index",
+        tags: ["rag", "indexing", "retrieval", "workflows", "data-connectors"]
+      },
+      {
+        name: "Haystack",
+        category: "Frameworks & RAG",
+        color: "var(--blue)",
+        type: "RAG framework",
+        license: "Open source",
+        summary: "Pipeline-oriented framework with strong support for advanced retrieval patterns and production-ready RAG systems.",
+        useWhen: "Use when you want modular pipelines, advanced retrievers, hybrid retrieval, and agent patterns without locking into one model provider.",
+        website: "https://haystack.deepset.ai/",
+        docs: "https://haystack.deepset.ai/",
+        github: "https://github.com/deepset-ai/haystack",
+        tags: ["rag", "pipelines", "hybrid-retrieval", "agents", "retrievers"]
+      },
+      {
+        name: "DSPy",
+        category: "Frameworks & RAG",
+        color: "var(--blue)",
+        type: "Programming model",
+        license: "Open source",
+        summary: "Declarative framework for composing LM programs and optimizing prompts or weights against metrics.",
+        useWhen: "Use when you want evaluation-driven AI pipelines where prompts are compiled and improved systematically rather than hand-tuned forever.",
+        website: "https://dspy.ai/",
+        docs: "https://dspy.ai/",
+        github: "https://github.com/stanfordnlp/dspy",
+        tags: ["optimization", "prompting", "rag", "metrics", "declarative"]
+      },
+      {
+        name: "Pinecone",
+        category: "Vector Stores & Search",
+        color: "var(--green)",
+        type: "Managed vector DB",
+        license: "Commercial + managed",
+        summary: "Managed vector database for semantic, lexical, and hybrid retrieval in production.",
+        useWhen: "Use when you want managed infrastructure, production scale, and a straightforward cloud option for vector search.",
+        website: "https://www.pinecone.io/",
+        docs: "https://docs.pinecone.io/guides/get-started/overview",
+        github: "https://github.com/pinecone-io",
+        tags: ["vector-db", "managed", "semantic-search", "hybrid-search", "production"]
+      },
+      {
+        name: "Weaviate",
+        category: "Vector Stores & Search",
+        color: "var(--green)",
+        type: "Vector database",
+        license: "Open source + cloud",
+        summary: "Vector database with keyword, vector, and hybrid search plus rich filtering and schema support.",
+        useWhen: "Use when you want a flexible search layer with hybrid retrieval and structured object modeling.",
+        website: "https://weaviate.io/",
+        docs: "https://docs.weaviate.io/weaviate/concepts/search",
+        github: "https://github.com/weaviate/weaviate",
+        tags: ["vector-db", "hybrid-search", "bm25", "semantic-search", "cloud"]
+      },
+      {
+        name: "Qdrant",
+        category: "Vector Stores & Search",
+        color: "var(--green)",
+        type: "Vector database",
+        license: "Open source + cloud",
+        summary: "Vector search engine with strong support for dense+sparse hybrid retrieval and reranking patterns.",
+        useWhen: "Use when you care about retrieval quality engineering, hybrid queries, multivectors, and open-source deployment.",
+        website: "https://qdrant.tech/",
+        docs: "https://qdrant.tech/documentation/concepts/hybrid-queries/",
+        github: "https://github.com/qdrant/qdrant",
+        tags: ["vector-db", "hybrid-search", "rrf", "reranking", "open-source"]
+      },
+      {
+        name: "Milvus",
+        category: "Vector Stores & Search",
+        color: "var(--green)",
+        type: "Vector database",
+        license: "Open source + cloud",
+        summary: "High-scale vector database with hybrid search and reranking support.",
+        useWhen: "Use when you expect large-scale retrieval workloads and want a serious open-source vector database built for scale.",
+        website: "https://milvus.io/",
+        docs: "https://milvus.io/docs/multi-vector-search.md",
+        github: "https://github.com/milvus-io/milvus",
+        tags: ["vector-db", "hybrid-search", "reranking", "scale", "ann"]
+      },
+      {
+        name: "Chroma",
+        category: "Vector Stores & Search",
+        color: "var(--green)",
+        type: "Retrieval database",
+        license: "Open source + cloud",
+        summary: "Developer-friendly retrieval system with embeddings, metadata filtering, dense+sparse search, and local-first ergonomics.",
+        useWhen: "Use when you want a simple local-to-cloud retrieval layer for prototypes, internal tools, and agent memory use cases.",
+        website: "https://www.trychroma.com/",
+        docs: "https://docs.trychroma.com/docs/overview/introduction",
+        github: "https://github.com/chroma-core/chroma",
+        tags: ["vector-db", "local-first", "retrieval", "prototype", "metadata"]
+      },
+      {
+        name: "CrewAI",
+        category: "Agents & Workflow Orchestration",
+        color: "var(--purple)",
+        type: "Agent framework",
+        license: "Open source",
+        summary: "Framework for multi-agent teams and event-driven flows with built-in memory, knowledge, and observability concepts.",
+        useWhen: "Use when you prefer explicit teams of collaborating agents and a high-level mental model around crews and flows.",
+        website: "https://www.crewai.com/",
+        docs: "https://docs.crewai.com/",
+        github: "https://github.com/crewAIInc/crewAI",
+        tags: ["multi-agent", "flows", "crews", "orchestration", "knowledge"]
+      },
+      {
+        name: "OpenAI Agents SDK",
+        category: "Agents & Workflow Orchestration",
+        color: "var(--purple)",
+        type: "Agent framework",
+        license: "Open source SDK",
+        summary: "Lightweight agent framework focused on tools, handoffs, guardrails, tracing, and production-oriented primitives.",
+        useWhen: "Use when you want minimal abstractions, strong tool use, and a clean path to server-side agent orchestration.",
+        website: "https://developers.openai.com/api/docs/guides/agents-sdk/",
+        docs: "https://openai.github.io/openai-agents-python/",
+        github: "https://github.com/openai/openai-agents-python",
+        tags: ["agents", "handoffs", "guardrails", "tracing", "tool-calling"]
+      },
+      {
+        name: "AutoGen",
+        category: "Agents & Workflow Orchestration",
+        color: "var(--purple)",
+        type: "Multi-agent framework",
+        license: "Open source",
+        summary: "Microsoft framework for building multi-agent applications with higher-level AgentChat APIs and lower-level core primitives.",
+        useWhen: "Use when you want multi-agent experimentation with reusable patterns, teams, and message-based coordination.",
+        website: "https://microsoft.github.io/autogen/stable/",
+        docs: "https://microsoft.github.io/autogen/stable//user-guide/agentchat-user-guide/index.html",
+        github: "https://github.com/microsoft/autogen",
+        tags: ["multi-agent", "agentchat", "microsoft", "teams", "messages"]
+      },
+      {
+        name: "PydanticAI",
+        category: "Agents & Workflow Orchestration",
+        color: "var(--purple)",
+        type: "Agent framework",
+        license: "Open source",
+        summary: "Pythonic agent framework built around type safety, structured outputs, tools, and Pydantic models.",
+        useWhen: "Use when correctness, schemas, validation, and strongly typed outputs matter as much as the prompt itself.",
+        website: "https://ai.pydantic.dev/",
+        docs: "https://ai.pydantic.dev/agent/",
+        github: "https://github.com/pydantic/pydantic-ai",
+        tags: ["structured-output", "python", "pydantic", "validation", "tools"]
+      },
+      {
+        name: "Semantic Kernel",
+        category: "Agents & Workflow Orchestration",
+        color: "var(--purple)",
+        type: "AI SDK",
+        license: "Open source",
+        summary: "Microsoft’s middleware and agent framework for integrating models, plugins, and enterprise workflows.",
+        useWhen: "Use when you want an enterprise-friendly SDK spanning C#, Python, and Java with plugins and agent abstractions.",
+        website: "https://learn.microsoft.com/en-us/semantic-kernel/",
+        docs: "https://learn.microsoft.com/en-us/semantic-kernel/overview/",
+        github: "https://github.com/microsoft/semantic-kernel",
+        tags: ["enterprise", "plugins", "microsoft", "agents", "middleware"]
+      },
+      {
+        name: "smolagents",
+        category: "Agents & Workflow Orchestration",
+        color: "var(--purple)",
+        type: "Agent library",
+        license: "Open source",
+        summary: "Small, simple Hugging Face library for agents with code-execution and tool-calling patterns.",
+        useWhen: "Use when you want a lighter agent library with minimal abstractions and a quick experimentation loop.",
+        website: "https://huggingface.co/docs/smolagents/index",
+        docs: "https://huggingface.co/docs/smolagents/index",
+        github: "https://github.com/huggingface/smolagents",
+        tags: ["agents", "huggingface", "simple", "tool-calling", "code-agent"]
+      },
+      {
+        name: "Prefect",
+        category: "Agents & Workflow Orchestration",
+        color: "var(--purple)",
+        type: "Workflow orchestration",
+        license: "Open source + cloud",
+        summary: "Modern workflow orchestrator centered on Python flows, deployments, scheduling, events, and automations.",
+        useWhen: "Use when your AI system needs operational workflows, scheduled jobs, reactive automations, or hybrid data+AI pipelines.",
+        website: "https://www.prefect.io/",
+        docs: "https://docs.prefect.io/v3/get-started",
+        github: "https://github.com/PrefectHQ/prefect",
+        tags: ["orchestration", "flows", "deployments", "scheduling", "python"]
+      },
+      {
+        name: "Temporal",
+        category: "Agents & Workflow Orchestration",
+        color: "var(--purple)",
+        type: "Durable execution platform",
+        license: "Open source + cloud",
+        summary: "Platform for durable workflows that resume exactly where they left off after failures.",
+        useWhen: "Use when you need highly reliable, long-running, distributed workflows with strong failure recovery semantics.",
+        website: "https://temporal.io/",
+        docs: "https://docs.temporal.io/",
+        github: "https://github.com/temporalio/temporal",
+        tags: ["durable-execution", "workflow", "retries", "distributed-systems", "reliability"]
+      },
+      {
+        name: "Dagster",
+        category: "Agents & Workflow Orchestration",
+        color: "var(--purple)",
+        type: "Data orchestrator",
+        license: "Open source + cloud",
+        summary: "Data and ML orchestration platform built around software-defined assets and data-aware pipelines.",
+        useWhen: "Use when your AI stack is tightly tied to data assets, ingestion pipelines, and reproducible ML or ETL workflows.",
+        website: "https://dagster.io/",
+        docs: "https://docs.dagster.io/api/dagster/assets",
+        github: "https://github.com/dagster-io/dagster",
+        tags: ["assets", "data-pipelines", "orchestration", "mlops", "lineage"]
+      },
+      {
+        name: "Apache Airflow",
+        category: "Agents & Workflow Orchestration",
+        color: "var(--purple)",
+        type: "Workflow orchestrator",
+        license: "Open source",
+        summary: "Widely used platform for developing, scheduling, and monitoring batch-oriented workflows.",
+        useWhen: "Use when your organization already runs Airflow or when your AI workloads sit inside broader batch data workflows.",
+        website: "https://airflow.apache.org/",
+        docs: "https://airflow.apache.org/docs/apache-airflow/stable/index.html",
+        github: "https://github.com/apache/airflow",
+        tags: ["batch", "scheduling", "dag", "orchestration", "enterprise"]
+      },
+      {
+        name: "Unstructured",
+        category: "Parsing, Ingestion & Documents",
+        color: "var(--cyan)",
+        type: "Document ingestion",
+        license: "Open source + platform",
+        summary: "Platform and libraries for partitioning, chunking, embedding, and enriching unstructured documents.",
+        useWhen: "Use when your bottleneck is messy enterprise documents and you need robust extraction before retrieval even starts.",
+        website: "https://unstructured.io/",
+        docs: "https://docs.unstructured.io/welcome",
+        github: "https://github.com/Unstructured-IO/unstructured",
+        tags: ["document-parsing", "chunking", "ingestion", "rag", "pdf"]
+      },
+      {
+        name: "Docling",
+        category: "Parsing, Ingestion & Documents",
+        color: "var(--cyan)",
+        type: "Document parser",
+        license: "Open source",
+        summary: "Document processing toolkit that parses diverse file types into a structured document representation.",
+        useWhen: "Use when you want high-quality local parsing of PDFs and office documents into a unified structured format.",
+        website: "https://www.docling.ai/",
+        docs: "https://docling-project.github.io/docling/",
+        github: "https://github.com/docling-project/docling",
+        tags: ["pdf", "ocr", "layout", "tables", "local-processing"]
+      },
+      {
+        name: "PyMuPDF4LLM",
+        category: "Parsing, Ingestion & Documents",
+        color: "var(--cyan)",
+        type: "PDF extraction",
+        license: "Open source",
+        summary: "Lightweight PDF-to-markdown and structured extraction tool designed for LLM and RAG pipelines.",
+        useWhen: "Use when you want a fast, lightweight Python-native way to turn PDFs into usable markdown without a heavy stack.",
+        website: "https://pymupdf.io/4llm",
+        docs: "https://pymupdf.readthedocs.io/en/latest/pymupdf4llm/",
+        github: "https://github.com/pymupdf/pymupdf4llm",
+        tags: ["pdf", "markdown", "rag", "lightweight", "python"]
+      },
+      {
+        name: "LlamaParse",
+        category: "Parsing, Ingestion & Documents",
+        color: "var(--cyan)",
+        type: "Parsing service",
+        license: "Cloud service",
+        summary: "Hosted document parsing service from the LlamaIndex ecosystem for extracting structured outputs from complex files.",
+        useWhen: "Use when parsing accuracy is critical and you want a managed parsing layer with OCR, layout, charts, and export options.",
+        website: "https://www.llamaindex.ai/llamaparse",
+        docs: "https://docs.cloud.llamaindex.ai/llamaparse/faq",
+        github: "https://github.com/run-llama/llama_parse",
+        tags: ["pdf", "parsing", "ocr", "managed", "llamaindex"]
+      },
+      {
+        name: "vLLM",
+        category: "Serving, Gateway & Runtime",
+        color: "var(--orange)",
+        type: "Inference server",
+        license: "Open source",
+        summary: "High-performance LLM serving engine with an OpenAI-compatible server interface.",
+        useWhen: "Use when you want fast self-hosted serving for open-weight models and easy compatibility with existing OpenAI-style clients.",
+        website: "https://docs.vllm.ai/",
+        docs: "https://docs.vllm.ai/en/stable/serving/openai_compatible_server/",
+        github: "https://github.com/vllm-project/vllm",
+        tags: ["serving", "openai-compatible", "inference", "self-hosted", "llm"]
+      },
+      {
+        name: "Text Generation Inference (TGI)",
+        category: "Serving, Gateway & Runtime",
+        color: "var(--orange)",
+        type: "Inference server",
+        license: "Open source",
+        summary: "Hugging Face toolkit for deploying and serving open-source LLMs with optimized generation paths.",
+        useWhen: "Use when you want Hugging Face-native production serving with strong support for open models and streaming APIs.",
+        website: "https://huggingface.co/docs/text-generation-inference/index",
+        docs: "https://huggingface.co/docs/text-generation-inference/index",
+        github: "https://github.com/huggingface/text-generation-inference",
+        tags: ["huggingface", "serving", "open-source-models", "streaming", "deployment"]
+      },
+      {
+        name: "LiteLLM",
+        category: "Serving, Gateway & Runtime",
+        color: "var(--orange)",
+        type: "LLM gateway",
+        license: "Open source + cloud",
+        summary: "Unified gateway and SDK for routing across many model providers with fallbacks, retries, budgets, and proxy features.",
+        useWhen: "Use when you need one interface for many providers or want load balancing, routing, cost control, and proxying across models.",
+        website: "https://docs.litellm.ai/",
+        docs: "https://docs.litellm.ai/docs/",
+        github: "https://github.com/BerriAI/litellm",
+        tags: ["gateway", "routing", "fallbacks", "openai-compatible", "multi-provider"]
+      },
+      {
+        name: "Ollama",
+        category: "Serving, Gateway & Runtime",
+        color: "var(--orange)",
+        type: "Local runtime",
+        license: "Open source components + service",
+        summary: "Local model runtime and API for running open models on macOS, Linux, and Windows.",
+        useWhen: "Use when you want the simplest local model experience for experimentation, demos, and private desktop workflows.",
+        website: "https://ollama.com/",
+        docs: "https://docs.ollama.com/api/introduction",
+        github: "https://github.com/ollama/ollama",
+        tags: ["local-llm", "runtime", "desktop", "api", "self-hosted"]
+      },
+      {
+        name: "Langfuse",
+        category: "Evaluation & Observability",
+        color: "var(--pink)",
+        type: "Observability platform",
+        license: "Open source + cloud",
+        summary: "Platform for tracing, prompt management, online production evals, and offline experiments.",
+        useWhen: "Use when you want one place for traces, prompt versions, experiment comparison, and production feedback loops.",
+        website: "https://langfuse.com/",
+        docs: "https://langfuse.com/docs",
+        github: "https://github.com/langfuse/langfuse",
+        tags: ["tracing", "prompt-management", "evals", "observability", "opensource"]
+      },
+      {
+        name: "Arize Phoenix",
+        category: "Evaluation & Observability",
+        color: "var(--pink)",
+        type: "Observability + evals",
+        license: "Open source + cloud",
+        summary: "Tracing and evaluation tool for AI systems with OpenTelemetry support and framework auto-instrumentation.",
+        useWhen: "Use when you need trace-level debugging of retrieval, tool use, and model behavior with OpenTelemetry alignment.",
+        website: "https://arize.com/phoenix/",
+        docs: "https://arize.com/docs/phoenix",
+        github: "https://github.com/Arize-ai/phoenix",
+        tags: ["tracing", "opentelemetry", "evals", "rag", "instrumentation"]
+      },
+      {
+        name: "LangSmith",
+        category: "Evaluation & Observability",
+        color: "var(--pink)",
+        type: "Observability + evals",
+        license: "Commercial + platform",
+        summary: "LangChain’s platform for traces, datasets, offline and online evals, and agent debugging.",
+        useWhen: "Use when you already build with LangChain/LangGraph or want a strong dataset-and-evaluator workflow around agent iteration.",
+        website: "https://smith.langchain.com/",
+        docs: "https://docs.langchain.com/langsmith/observability",
+        github: "https://github.com/langchain-ai/langsmith-sdk",
+        tags: ["tracing", "datasets", "evals", "agents", "langchain"]
+      },
+      {
+        name: "MLflow",
+        category: "Evaluation & Observability",
+        color: "var(--pink)",
+        type: "ML + GenAI platform",
+        license: "Open source",
+        summary: "Model lifecycle platform that now also covers GenAI tracing, prompt registry, and LLM/agent evaluation.",
+        useWhen: "Use when you already have MLOps around MLflow and want LLM evaluation, monitoring, and experiments inside the same operating system.",
+        website: "https://mlflow.org/",
+        docs: "https://mlflow.org/docs/latest/genai/eval-monitor/",
+        github: "https://github.com/mlflow/mlflow",
+        tags: ["mlops", "evals", "tracing", "prompt-registry", "experiments"]
+      },
+      {
+        name: "Promptfoo",
+        category: "Evaluation & Observability",
+        color: "var(--pink)",
+        type: "Evaluation + red teaming",
+        license: "Open source",
+        summary: "CLI-first framework for prompt tests, app evaluations, regression checks, and red teaming.",
+        useWhen: "Use when you want reproducible YAML-based tests for prompts, agents, or RAG apps before shipping changes.",
+        website: "https://www.promptfoo.dev/",
+        docs: "https://www.promptfoo.dev/docs/",
+        github: "https://github.com/promptfoo/promptfoo",
+        tags: ["evals", "red-team", "cli", "security", "regression-tests"]
+      },
+      {
+        name: "NeMo Guardrails",
+        category: "Protocols & Guardrails",
+        color: "var(--cyan)",
+        type: "Guardrails framework",
+        license: "Open source",
+        summary: "Framework for programmable input, retrieval, dialog, execution, and output guardrails around LLM apps.",
+        useWhen: "Use when you need explicit policy layers around safety, retrieval validation, conversation flow, or tool execution.",
+        website: "https://docs.nvidia.com/nemo/guardrails/latest/index.html",
+        docs: "https://docs.nvidia.com/nemo/guardrails/latest/index.html",
+        github: "https://github.com/NVIDIA/NeMo-Guardrails",
+        tags: ["guardrails", "safety", "retrieval-rails", "policies", "nvidia"]
+      },
+      {
+        name: "Model Context Protocol (MCP)",
+        category: "Protocols & Guardrails",
+        color: "var(--cyan)",
+        type: "Open standard",
+        license: "Open standard",
+        summary: "Protocol standard for connecting AI applications to tools, data sources, and external systems.",
+        useWhen: "Use when you want a standard interface for tool and context connectivity across assistants, IDEs, and custom AI hosts.",
+        website: "https://modelcontextprotocol.io/",
+        docs: "https://modelcontextprotocol.io/docs/getting-started/intro",
+        github: "https://github.com/modelcontextprotocol",
+        tags: ["protocol", "tools", "context", "standard", "integration"]
+      }
+    ];
+
+    const featuredSources = [
+      { name: "LangGraph docs", url: "https://docs.langchain.com/oss/python/langgraph/overview" },
+      { name: "LlamaIndex workflows", url: "https://developers.llamaindex.ai/python/llamaagents/workflows/" },
+      { name: "Haystack", url: "https://haystack.deepset.ai/" },
+      { name: "Pinecone docs", url: "https://docs.pinecone.io/guides/get-started/overview" },
+      { name: "Qdrant hybrid queries", url: "https://qdrant.tech/documentation/concepts/hybrid-queries/" },
+      { name: "Weaviate search", url: "https://docs.weaviate.io/weaviate/concepts/search" },
+      { name: "CrewAI docs", url: "https://docs.crewai.com/" },
+      { name: "OpenAI Agents SDK", url: "https://openai.github.io/openai-agents-python/" },
+      { name: "Temporal docs", url: "https://docs.temporal.io/" },
+      { name: "vLLM server", url: "https://docs.vllm.ai/en/stable/serving/openai_compatible_server/" },
+      { name: "Langfuse docs", url: "https://langfuse.com/docs" },
+      { name: "Phoenix docs", url: "https://arize.com/docs/phoenix" }
+    ];
+
+    const chipsEl = document.getElementById('categoryChips');
+    const gridEl = document.getElementById('toolGrid');
+    const searchEl = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const resultCountEl = document.getElementById('resultCount');
+    const emptyEl = document.getElementById('emptyState');
+    const statToolsEl = document.getElementById('statTools');
+    const sourceListEl = document.getElementById('sourceList');
+
+    statToolsEl.textContent = tools.length;
+
+    const categories = ['All', ...Array.from(new Set(tools.map(t => t.category)))];
+    let activeCategory = 'All';
+    let query = '';
+
+    function renderChips() {
+      chipsEl.innerHTML = '';
+      categories.forEach(category => {
+        const btn = document.createElement('button');
+        btn.className = `chip ${category === activeCategory ? 'active' : ''}`;
+        btn.textContent = category;
+        btn.addEventListener('click', () => {
+          activeCategory = category;
+          renderChips();
+          renderTools();
+        });
+        chipsEl.appendChild(btn);
+      });
+    }
+
+    function toolMatches(tool) {
+      const haystack = [
+        tool.name,
+        tool.category,
+        tool.type,
+        tool.license,
+        tool.summary,
+        tool.useWhen,
+        ...(tool.tags || [])
+      ].join(' ').toLowerCase();
+
+      const categoryOk = activeCategory === 'All' || tool.category === activeCategory;
+      const queryOk = !query || haystack.includes(query);
+      return categoryOk && queryOk;
+    }
+
+    function card(tool) {
+      const tags = (tool.tags || []).slice(0, 5).map(tag => `<span>${tag}</span>`).join('');
+      return `
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <h3>${tool.name}</h3>
+              <div class="meta">
+                <span>${tool.type}</span>
+                <span>${tool.license}</span>
+                <span>${tool.category}</span>
+              </div>
+            </div>
+            <div class="tag"><span class="dot" style="background:${tool.color}; box-shadow:0 0 0 4px rgba(255,255,255,0.08);"></span>${tool.type}</div>
+          </div>
+          <div class="desc">${tool.summary}</div>
+          <div class="usewhen"><strong>Best when:</strong> ${tool.useWhen}</div>
+          <div class="meta">${tags}</div>
+          <div class="links">
+            <a class="link-btn" href="${tool.docs}" target="_blank" rel="noreferrer">Docs</a>
+            <a class="link-btn" href="${tool.website}" target="_blank" rel="noreferrer">Website</a>
+            <a class="link-btn" href="${tool.github}" target="_blank" rel="noreferrer">GitHub</a>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderTools() {
+      const filtered = tools.filter(toolMatches);
+      gridEl.innerHTML = filtered.map(card).join('');
+      emptyEl.hidden = filtered.length !== 0;
+      gridEl.hidden = filtered.length === 0;
+      resultCountEl.textContent = `Showing ${filtered.length} of ${tools.length} tools`;
+    }
+
+    function renderSources() {
+      sourceListEl.innerHTML = featuredSources.map(source => `
+        <a class="source-link" href="${source.url}" target="_blank" rel="noreferrer">${source.name}</a>
+      `).join('');
+    }
+
+    searchEl.addEventListener('input', (e) => {
+      query = e.target.value.trim().toLowerCase();
+      renderTools();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      query = '';
+      activeCategory = 'All';
+      searchEl.value = '';
+      renderChips();
+      renderTools();
+    });
+
+    renderChips();
+    renderTools();
+    renderSources();
+  </script>
+</body>
+</html>
